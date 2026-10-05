@@ -11,9 +11,9 @@
 #include <jpeglib.h>
 #include <png.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+// #ifdef _WIN32
+// #include <windows.h>
+// #endif
 
 #include <tbaricault/filesystem.hpp>
 
@@ -61,11 +61,11 @@ namespace tbaricault::images
         if (format == Format::Auto)
         {
             std::string extension = tbaricault::filesystem::extension(path);
-#ifdef _WIN32
-            if (extension == "bmp")
-                format = Format::BMP;
-            else
-#endif
+// #ifdef _WIN32
+//             if (extension == "bmp")
+//                 format = Format::BMP;
+//             else
+// #endif
             if (extension == "jpg" || extension == "jpeg")
                 format = Format::JPEG;
             else if (extension == "png")
@@ -77,54 +77,54 @@ namespace tbaricault::images
         {
             case Format::Auto:
                 break;
-#ifdef _WIN32
-            case Format::BMP:
-            {
-                HBITMAP hbmp = reinterpret_cast<HBITMAP>(LoadImageA(nullptr, static_cast<LPCSTR>(path.c_str()), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
-                HDC hdc = GetDC(nullptr);
-                BITMAPINFO bmpInfo = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-                GetDIBits(
-                    hdc, hbmp,
-                    0, 0,
-                    nullptr,
-                    &bmpInfo,
-                    DIB_RGB_COLORS
-                );
-                bmpInfo.bmiHeader.biBitCount    = 32;
-                bmpInfo.bmiHeader.biCompression = BI_RGB;
-                bmpInfo.bmiHeader.biHeight      = abs(bmpInfo.bmiHeader.biHeight);
-                this->_size = {
-                    bmpInfo.bmiHeader.biWidth,
-                    bmpInfo.bmiHeader.biHeight
-                };
-                BYTE* data = new BYTE[bmpInfo.bmiHeader.biSizeImage];
-                GetDIBits(
-                    hdc, hbmp,
-                    0, this->_size.y,
-                    data,
-                    &bmpInfo,
-                    DIB_RGB_COLORS
-                );
-                this->_data = new tbaricault::colors::RGBA[this->_size.x * this->_size.y];
-                for (int y = 0; y < this->_size.y; y++)
-                {
-                    for (int x = 0; x < this->_size.x; x++)
-                    {
-                        int i = (this->_size.x * (this->_size.y - y - 1) + x) * 4;
-                        this->_data[this->_size.x * y + x] = (
-                            data[i]            +
-                            (data[i + 1] << 8)  +
-                            (data[i + 2] << 16) +
-                            (255 << 24)
-                        );
-                    }
-                }
-                ReleaseDC(nullptr, hdc);
-                delete[] data;
-                break;
-            }
-#endif
+// #ifdef _WIN32
+//             case Format::BMP:
+//             {
+//                 HBITMAP hbmp = reinterpret_cast<HBITMAP>(LoadImageA(nullptr, static_cast<LPCSTR>(path.c_str()), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE));
+//                 HDC hdc = GetDC(nullptr);
+//                 BITMAPINFO bmpInfo = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//                 bmpInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+//                 GetDIBits(
+//                     hdc, hbmp,
+//                     0, 0,
+//                     nullptr,
+//                     &bmpInfo,
+//                     DIB_RGB_COLORS
+//                 );
+//                 bmpInfo.bmiHeader.biBitCount    = 32;
+//                 bmpInfo.bmiHeader.biCompression = BI_RGB;
+//                 bmpInfo.bmiHeader.biHeight      = abs(bmpInfo.bmiHeader.biHeight);
+//                 this->_size = {
+//                     bmpInfo.bmiHeader.biWidth,
+//                     bmpInfo.bmiHeader.biHeight
+//                 };
+//                 BYTE* data = new BYTE[bmpInfo.bmiHeader.biSizeImage];
+//                 GetDIBits(
+//                     hdc, hbmp,
+//                     0, this->_size.y,
+//                     data,
+//                     &bmpInfo,
+//                     DIB_RGB_COLORS
+//                 );
+//                 this->_data = new tbaricault::colors::RGBA[this->_size.x * this->_size.y];
+//                 for (int y = 0; y < this->_size.y; y++)
+//                 {
+//                     for (int x = 0; x < this->_size.x; x++)
+//                     {
+//                         int i = (this->_size.x * (this->_size.y - y - 1) + x) * 4;
+//                         this->_data[this->_size.x * y + x] = (
+//                             data[i]            +
+//                             (data[i + 1] << 8)  +
+//                             (data[i + 2] << 16) +
+//                             (255 << 24)
+//                         );
+//                     }
+//                 }
+//                 ReleaseDC(nullptr, hdc);
+//                 delete[] data;
+//                 break;
+//             }
+// #endif
             case Format::JPEG:
             {
                 FILE* file = fopen(path.c_str(), "rb");
@@ -297,11 +297,11 @@ namespace tbaricault::images
         if (format == Format::Auto)
         {
             std::string extension = tbaricault::filesystem::extension(path);
-#ifdef _WIN32
-            if (extension == "bmp")
-                format = Format::BMP;
-            else
-#endif
+// #ifdef _WIN32
+//             if (extension == "bmp")
+//                 format = Format::BMP;
+//             else
+// #endif
             if (extension == "jpg" || extension == "jpeg")
                 format = Format::JPEG;
             else if (extension == "png")
@@ -313,47 +313,47 @@ namespace tbaricault::images
         {
             case Format::Auto:
                 return (false);
-#ifdef _WIN32
-            case Format::BMP:
-            {
-                if (this->_data == nullptr)
-                    return (false);
-                FILE* file = fopen(path.c_str(), "wb");
-                if (file == nullptr)
-                    return (false);
-                BYTE* data = new BYTE[this->_size.x * this->_size.y * 4];
-                for (int y = 0; y < this->_size.y; y++)
-                {
-                    for (int x = 0; x < this->_size.x; x++)
-                    {
-                        data[(this->_size.x * (this->_size.y - y - 1) + x) * 4]     = (this->_data[this->_size.x * y + x] >> 16) & 0xff;
-                        data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 1] = (this->_data[this->_size.x * y + x] >> 8)  & 0xff;
-                        data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 2] =  this->_data[this->_size.x * y + x]        & 0xff;
-                        data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 3] = 0;
-                    }
-                }
-                BITMAPINFOHEADER infoHeader;
-                infoHeader.biSize        = sizeof(BITMAPINFOHEADER);
-                infoHeader.biSizeImage   = this->_size.x * this->_size.y * 4;
-                infoHeader.biWidth       = this->_size.x;
-                infoHeader.biHeight      = this->_size.y;
-                infoHeader.biPlanes      = 1;
-                infoHeader.biBitCount    = 32;
-                infoHeader.biCompression = BI_RGB;
-                BITMAPFILEHEADER fileHeader;
-                fileHeader.bfType      = 'B' + ('M' << 8);
-                fileHeader.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-                fileHeader.bfSize      = fileHeader.bfOffBits + infoHeader.biSizeImage;
-                fileHeader.bfReserved1 = 0;
-                fileHeader.bfReserved2 = 0;
-                fwrite(&fileHeader, 1, sizeof(BITMAPFILEHEADER), file);
-                fwrite(&infoHeader, 1, sizeof(BITMAPINFOHEADER), file);
-                fwrite(data, 1, infoHeader.biSizeImage, file);
-                fclose(file);
-                delete[] data;
-                break;
-            }
-#endif
+// #ifdef _WIN32
+//             case Format::BMP:
+//             {
+//                 if (this->_data == nullptr)
+//                     return (false);
+//                 FILE* file = fopen(path.c_str(), "wb");
+//                 if (file == nullptr)
+//                     return (false);
+//                 BYTE* data = new BYTE[this->_size.x * this->_size.y * 4];
+//                 for (int y = 0; y < this->_size.y; y++)
+//                 {
+//                     for (int x = 0; x < this->_size.x; x++)
+//                     {
+//                         data[(this->_size.x * (this->_size.y - y - 1) + x) * 4]     = (this->_data[this->_size.x * y + x] >> 16) & 0xff;
+//                         data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 1] = (this->_data[this->_size.x * y + x] >> 8)  & 0xff;
+//                         data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 2] =  this->_data[this->_size.x * y + x]        & 0xff;
+//                         data[(this->_size.x * (this->_size.y - y - 1) + x) * 4 + 3] = 0;
+//                     }
+//                 }
+//                 BITMAPINFOHEADER infoHeader;
+//                 infoHeader.biSize        = sizeof(BITMAPINFOHEADER);
+//                 infoHeader.biSizeImage   = this->_size.x * this->_size.y * 4;
+//                 infoHeader.biWidth       = this->_size.x;
+//                 infoHeader.biHeight      = this->_size.y;
+//                 infoHeader.biPlanes      = 1;
+//                 infoHeader.biBitCount    = 32;
+//                 infoHeader.biCompression = BI_RGB;
+//                 BITMAPFILEHEADER fileHeader;
+//                 fileHeader.bfType      = 'B' + ('M' << 8);
+//                 fileHeader.bfOffBits   = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+//                 fileHeader.bfSize      = fileHeader.bfOffBits + infoHeader.biSizeImage;
+//                 fileHeader.bfReserved1 = 0;
+//                 fileHeader.bfReserved2 = 0;
+//                 fwrite(&fileHeader, 1, sizeof(BITMAPFILEHEADER), file);
+//                 fwrite(&infoHeader, 1, sizeof(BITMAPINFOHEADER), file);
+//                 fwrite(data, 1, infoHeader.biSizeImage, file);
+//                 fclose(file);
+//                 delete[] data;
+//                 break;
+//             }
+// #endif
             case Format::JPEG:
             {
                 if (this->_data == nullptr)
