@@ -10,7 +10,10 @@
 
 #include <jpeglib.h>
 #include <png.h>
+
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 #include <tbaricault/filesystem.hpp>
 
