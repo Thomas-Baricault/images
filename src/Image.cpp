@@ -252,41 +252,41 @@ namespace tbaricault::images
     Image& Image::operator=(const Image& other)
     {
         if (&other == this)
-            return (*this);
+            return *this;
         if (this->_data)
             delete[] this->_data;
         this->_size = other._size;
         this->_data = new tbaricault::colors::RGBA[this->_size.x * this->_size.y];
         std::copy(other._data, other._data + other._size.x * other._size.y, this->_data);
-        return (*this);
+        return *this;
     }
 
     Image& Image::operator=(Image&& other) noexcept
     {
         if (&other == this)
-            return (*this);
+            return *this;
         if (this->_data)
             delete[] this->_data;
         this->_size = other._size;
         this->_data = other._data;
         other._size = 0;
         other._data = nullptr;
-        return (*this);
+        return *this;
     }
 
     Image::operator bool() const noexcept
     {
-        return (this->_data != nullptr);
+        return this->_data != nullptr;
     }
 
     const tbaricault::math::Vector2<int>& Image::getSize() const noexcept
     {
-        return (this->_size);
+        return this->_size;
     }
 
     tbaricault::colors::RGBA* Image::getPixels() const noexcept
     {
-        return (this->_data);
+        return this->_data;
     }
 
     bool Image::save(const std::string& path, Format format) const
@@ -304,20 +304,20 @@ namespace tbaricault::images
             else if (extension == "png")
                 format = Format::PNG;
             else
-                return (false);
+                return false;
         }
         switch (format)
         {
             case Format::Auto:
-                return (false);
+                return false;
 #ifdef _WIN32
             case Format::BMP:
             {
                 if (this->_data == nullptr)
-                    return (false);
+                    return false;
                 FILE* file = fopen(path.c_str(), "wb");
                 if (file == nullptr)
-                    return (false);
+                    return false;
                 BYTE* data = new BYTE[this->_size.x * this->_size.y * 4];
                 for (int y = 0; y < this->_size.y; y++)
                 {
@@ -354,10 +354,10 @@ namespace tbaricault::images
             case Format::JPEG:
             {
                 if (this->_data == nullptr)
-                    return (false);
+                    return false;
                 FILE* file = fopen(path.c_str(), "wb");
                 if (file == NULL)
-                    return (false);
+                    return false;
                 jpeg_error_mgr error;
                 jpeg_compress_struct info;
                 info.err = jpeg_std_error(&error);
@@ -390,18 +390,18 @@ namespace tbaricault::images
             case Format::PNG:
             {
                 if (this->_data == nullptr)
-                    return (false);
+                    return false;
                 png_structp write = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
                 if (!write)
-                    return (false);
+                    return false;
                 png_infop info = png_create_info_struct(write);
                 if (!info)
-                    return (png_destroy_write_struct(&write, nullptr), false);
+                    return png_destroy_write_struct(&write, nullptr), false;
                 if (setjmp(png_jmpbuf(write)))
-                    return (png_destroy_write_struct(&write, &info), false);
+                    return png_destroy_write_struct(&write, &info), false;
                 FILE* file = fopen(path.c_str(), "wb");
                 if (file == nullptr)
-                    return (false);
+                    return false;
                 png_init_io(write, file);
                 png_set_IHDR(write, info, this->_size.x, this->_size.y, 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
                 png_bytepp data = new png_bytep[this->_size.y];
@@ -426,7 +426,7 @@ namespace tbaricault::images
                 break;
             }
         }
-        return (true);
+        return true;
     }
 
 }
