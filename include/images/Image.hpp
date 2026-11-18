@@ -38,12 +38,12 @@ namespace tbaricault::images
                  */
                 Auto = 0,
 
-#ifdef _WIN32
-                /**
-                 * @brief Bitmap format
-                 */
-                BMP = 1,
-#endif
+// #ifdef _WIN32
+//                 /**
+//                  * @brief Bitmap format
+//                  */
+//                 BMP = 1,
+// #endif
 
                 /**
                  * @brief JPEG format

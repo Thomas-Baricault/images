@@ -9,8 +9,7 @@ PACKAGES	=	JPEG					\
 				tbaricault_filesystem	\
 				tbaricault_math
 
-TARGETS		=	gdi32					\
-				JPEG::JPEG				\
+TARGETS		=	JPEG::JPEG				\
 				PNG::PNG				\
 				tbaricault::colors		\
 				tbaricault::filesystem	\
